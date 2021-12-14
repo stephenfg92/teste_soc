@@ -29,7 +29,7 @@ public class BlogSearchTest extends BaseWebDriverTest{
 
 		blogSearchPage = new BlogSearchPage(driver);
 	}
-	
+
 	@Test
 	public void verifyBlogHomePage(){
 		// Verifica se o título da página é o esperado.
@@ -97,19 +97,4 @@ public class BlogSearchTest extends BaseWebDriverTest{
 
 		driver.navigate().back();
 	}
-
-	@Ignore
-	@Test
-	public void verifyBlogPostCard(){
-		List<WebElement> postBoxes = driver.findElements(By.xpath("//div[contains(@class,'elementor-post__card')]"));
-		for (WebElement post : postBoxes){
-			assertTrue(isElementPresent(By.xpath("//div[contains(@class,'elementor-post__thumbnail__link')]")));
-			assertTrue(isElementPresent(By.xpath("//div[contains(@class,'elementor-post__thumbnail')]")));
-			assertTrue(isElementPresent(By.xpath("//div[contains(@class,'elementor-post__badge')]")));
-			assertTrue(isElementPresent(By.xpath("//div[contains(@class,'elementor-post__text')]")));
-			assertTrue(isElementPresent(By.xpath("//div[contains(@class,'elementor-post__title')]")));
-			assertTrue(isElementPresent(By.xpath("//div[contains(@class,'elementor-post__excerpt')]")));
-		}
-	}
-
 }
