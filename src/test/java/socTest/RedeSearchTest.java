@@ -40,8 +40,8 @@ public class RedeSearchTest extends BaseWebDriverTest {
 		redeSearchPage.searchFor("11013-001");
 		redeSearchPage.expandFiltrosConveniencia();
 
-		redeSearchPage.selectFiltro();
-		redeSearchPage.selectFiltro();
+
+		redeSearchPage.selectFiltroByIndex(1);
 
 		assertTrue(redeSearchPage.isFilterSelected());
 
@@ -50,9 +50,6 @@ public class RedeSearchTest extends BaseWebDriverTest {
 		takeScreenshot("Result-click-test");
 
 		driver.navigate().back();
-		redeSearchPage.resetFiltroIter();
-
-		//redeSearchPage.deselectFiltro();
 	}
 
 }

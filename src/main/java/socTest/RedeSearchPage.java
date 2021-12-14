@@ -60,10 +60,9 @@ public class RedeSearchPage {
     @FindAll( { @FindBy(className = "elemento-filtro")})
     List<WebElement> filtrosConveniencia;
 
-    // Controle do iterável
-    boolean m_firstIterCall = true;
-    Iterator<WebElement> m_filtrosIter;
-    WebElement m_currentIterElement;
+    // Controle da seleção dos filtros
+    private int m_currentFiltro;
+
 
     public RedeSearchPage(WebDriver driver) {
         this.driver = driver;
@@ -96,54 +95,45 @@ public class RedeSearchPage {
     	expandFiltrosServicosBtn.click();
     }
 
-
     private List<WebElement> getFiltrosConveniencia(){
         return filtrosConveniencia;
     }
 
-    public void selectFiltro() throws InterruptedException{
-        if (this.m_firstIterCall){
-            this.m_filtrosIter = getFiltrosConveniencia().iterator();
-            this.m_firstIterCall = false;
-        }
-        if (this.m_filtrosIter.hasNext()){
-            WebElement e = m_filtrosIter.next();
-            this.m_currentIterElement = e;
-
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(500));
-            wait.until(ExpectedConditions.elementToBeClickable(e));
-
-            Actions actions = new Actions(driver);
-            actions.moveToElement(e);
-            actions.click(e);
-
-            Action action = actions.build();
-            action.perform();
-
-        }
-    }
-
-    public void deselectFiltro() throws InterruptedException{
+    public void selectFiltroByIndex(int index) throws InterruptedException {
+    	WebElement e = getFiltrosConveniencia().get(index);
+    	this.m_currentFiltro = index;
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(500));
-        wait.until(ExpectedConditions.elementToBeClickable(this.m_currentIterElement));
+        wait.until(ExpectedConditions.elementToBeClickable(e));
 
         Actions actions = new Actions(driver);
-        actions.moveToElement(this.m_currentIterElement);
-        actions.click(this.m_currentIterElement);
+        actions.moveToElement(e);
+        actions.click(e);
+
+        Action action = actions.build();
+        action.perform();
+    }
+
+    public void deselectCurrentFiltro(){
+    	if (m_currentFiltro < 0){
+    		return;
+    	}
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(500));
+        wait.until(ExpectedConditions.elementToBeClickable(getFiltrosConveniencia().get(m_currentFiltro)));
+
+        Actions actions = new Actions(driver);
+        actions.moveToElement(getFiltrosConveniencia().get(m_currentFiltro));
+        actions.click(getFiltrosConveniencia().get(m_currentFiltro));
 
         Action action = actions.build();
         action.perform();
 
-    }
-
-    public void resetFiltroIter(){
-    	this.m_firstIterCall = true;
+        m_currentFiltro = -1;
     }
 
     public boolean isFilterSelected(){
-        WebElement e = this.m_currentIterElement.findElement(By.tagName("input"));
-
+        WebElement e = this.getFiltrosConveniencia().get(m_currentFiltro).findElement(By.tagName("input"));
         return e.isSelected();
     }
 
