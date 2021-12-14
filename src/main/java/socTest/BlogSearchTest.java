@@ -29,9 +29,9 @@ public class BlogSearchTest extends BaseWebDriverTest{
 
 		blogSearchPage = new BlogSearchPage(driver);
 	}
-
+	
 	@Test
-	public void verifyBlogSearchPage(){
+	public void verifyBlogHomePage(){
 		// Verifica se o título da página é o esperado.
 		assertThat(driver.getTitle(), containsString("Blog"));
 
@@ -45,7 +45,7 @@ public class BlogSearchTest extends BaseWebDriverTest{
 	}
 
 	@Test
-	public void verifyBlogSearchFunctionality() {
+	public void verifyBlogSearch() {
 		for (String title : blogSearchPage.getPostTitlesAsText()) {
 			blogSearchPage.searchFor(title);
 
