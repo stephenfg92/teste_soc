@@ -41,9 +41,8 @@ public class RedeSearchPage {
     			@FindBy(id = "msg-sem-resultados") } )
     WebElement noResultsMessage;
 
-    @FindBy(xpath = "//*[@id='conteudo-resultados']/div[1]/div//*")
-    //List<WebElement> searchResults;
-    WebElement searchResults;
+    @FindAll( { @FindBy(xpath = "//*[@id='conteudo-resultados']/div[1]/div/*") } )
+    List<WebElement> searchResults;
 
     @FindBys( {@FindBy(className = "section-sidenav"),
     		   @FindBy(id = "div-filtro-conveniencias"),
@@ -60,8 +59,15 @@ public class RedeSearchPage {
     @FindAll( { @FindBy(className = "elemento-filtro")})
     List<WebElement> filtrosConveniencia;
 
-    // Controle da seleção dos filtros
+    @FindBy(xpath="//*[@id='div-header-perfil']/div/div[3]/div[1]/span")
+    WebElement perfilTitleTruncated;
+
+    @FindBy(xpath="//*[@id='div-header-perfil']/div/div[3]/div[2]/span")
+    WebElement perfilTitle;
+
+    // Variáveis de controle
     private int m_currentFiltro;
+    private int m_currentResult;
 
 
     public RedeSearchPage(WebDriver driver) {
@@ -83,7 +89,7 @@ public class RedeSearchPage {
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(3000));
         wait.until(ExpectedConditions.invisibilityOf(loadingResults));
-        wait.until(ExpectedConditions.visibilityOf(searchResults));
+        wait.until(ExpectedConditions.visibilityOf(searchResults.get(0)));
         Thread.sleep(500);
     }
 
@@ -137,18 +143,36 @@ public class RedeSearchPage {
         return e.isSelected();
     }
 
-    public void selectResult() throws InterruptedException{
-    	JavascriptExecutor js = (JavascriptExecutor) driver;
-    	js.executeScript("var clickEvent = document.createEvent('MouseEvents');clickEvent.initEvent('mouseover', true, true); arguments[0].dispatchEvent(clickEvent);", searchResults);
+    public void selectResultByIndex(int index) throws InterruptedException{
 
-    	WebElement btn = searchResults.findElement(By.tagName("a"));
+    	JavascriptExecutor js = (JavascriptExecutor) driver;
+    	js.executeScript("var clickEvent = document.createEvent('MouseEvents');clickEvent.initEvent('mouseover', true, true); arguments[0].dispatchEvent(clickEvent);", searchResults.get(index));
+
+    	WebElement btn = searchResults.get(index).findElement(By.tagName("a"));
 
     	WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1500));
         wait.until(ExpectedConditions.elementToBeClickable(btn));
 
         js.executeScript("arguments[0].scrollIntoView(true);", btn);
 
-        WebElement btnt = searchResults.findElement(By.tagName("button"));
+        WebElement btnt = searchResults.get(index).findElement(By.tagName("button"));
     	js.executeScript("arguments[0].click();", btnt);
+
+    	m_currentResult = index;
+    }
+
+    public String getResultTitleByIndex(int index) {
+    	WebElement e = searchResults.get(index);
+    	String txt = e.findElement(By.className("truncate")).getText();
+
+    	return txt;
+    }
+
+    public String getResultProfileTitleTruncated(){
+    	return perfilTitleTruncated.getText();
+    }
+
+    public String getResultProfileTitle(){
+    	return perfilTitle.getText();
     }
 }

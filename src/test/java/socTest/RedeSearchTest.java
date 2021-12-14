@@ -2,6 +2,7 @@ package socTest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
@@ -40,13 +41,17 @@ public class RedeSearchTest extends BaseWebDriverTest {
 		redeSearchPage.searchFor("11013-001");
 		redeSearchPage.expandFiltrosConveniencia();
 
-
 		redeSearchPage.selectFiltroByIndex(1);
 
 		assertTrue(redeSearchPage.isFilterSelected());
 
-		redeSearchPage.selectResult();
+		String nomeEmpresa = redeSearchPage.getResultTitleByIndex(0);
+		redeSearchPage.selectResultByIndex(0);
 		Thread.sleep(1000);
+
+		assertThat(nomeEmpresa, containsString(redeSearchPage.getResultProfileTitleTruncated()));
+		assertThat(redeSearchPage.getResultProfileTitle(), equalToIgnoringCase(nomeEmpresa));
+
 		takeScreenshot("Result-click-test");
 
 		driver.navigate().back();
