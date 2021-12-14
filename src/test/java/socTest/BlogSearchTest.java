@@ -1,6 +1,7 @@
 package socTest;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
 
@@ -40,7 +41,7 @@ public class BlogSearchTest extends BaseWebDriverTest{
 		takeScreenshot("Blog início");
 	}
 
-	@Test
+	/*@Test
 	public void verifyBlogSearch() {
 		for (String title : blogSearchPage.getPostTitlesAsText()) {
 			blogSearchPage.searchFor(title);
@@ -58,6 +59,26 @@ public class BlogSearchTest extends BaseWebDriverTest{
 
 			driver.navigate().back();
 		}
+	}*/
+
+	@Test
+	public void verifyBlogSearchSingle() {
+
+		String title = blogSearchPage.getPostTitlesAsText().get(0);
+		blogSearchPage.searchFor(title);
+
+		// Verifica se o título da página contem a string utilizada na pesquisa.
+		assertThat(driver.getTitle(), containsString(title));
+		// Verifica se o título da pesquisa conte a string utilizada na pesquisa;
+		assertThat(blogSearchPage.getPageHeading().getText(), equalToIgnoringCase("Search Results for: " + title));
+		// Verifica se o elemento responsável por informar inexistência de resultados está oculto
+		assertFalse(blogSearchPage.getNoResultsVisibility());
+		// Verifica se o título do primeiro resultado é igual a string pesquisada.
+		assertEquals(title, blogSearchPage.getPostTitlesAsText().get(0));
+
+		takeScreenshot("Search results for " + title.replaceAll("[^a-zA-Z ]", ""));
+
+		driver.navigate().back();
 	}
 
 	@Test
