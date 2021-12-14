@@ -136,23 +136,16 @@ public class RedeSearchPage {
     	JavascriptExecutor js = (JavascriptExecutor) driver;
     	js.executeScript("var clickEvent = document.createEvent('MouseEvents');clickEvent.initEvent('mouseover', true, true); arguments[0].dispatchEvent(clickEvent);", searchResults);
 
-    	WebElement btn = searchResults.findElement(By.tagName("a"));
-
-    	//js.executeScript("var clickEvent = document.createEvent('MouseEvents');clickEvent.initEvent('mouseover', true, true); arguments[0].dispatchEvent(clickEvent);", btn);
+    	WebElement btn = searchResults.findElement(By.tagName("a"));//.findElement(By.tagName("button"));
+    	//WebElement btn = searchResults.findElement(By.linkText("Saiba mais"));//.findElement(By.tagName("button"));
 
     	WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1500));
-        //wait.until(ExpectedConditions.visibilityOf(btn));
         wait.until(ExpectedConditions.elementToBeClickable(btn));
 
         js.executeScript("arguments[0].scrollIntoView(true);", btn);
 
-    	//Actions _actions = new Actions(driver);
-    	//_actions.moveToElement(btn);
-    	//_actions.click(btn);
-    	//Action _action = _actions.build();
-    	//_action.perform();
-    	js.executeScript("arguments[0].click();", btn);
-        //btn.click();
+        WebElement btnt = searchResults.findElement(By.tagName("button"));
+    	js.executeScript("arguments[0].click();", btnt);
 
     	System.out.println("Action performed");
     }

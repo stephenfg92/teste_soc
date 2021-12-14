@@ -25,7 +25,7 @@ public class RedeSearchTest extends BaseWebDriverTest {
 	}
 
 	@Test
-	public void verifyFilters() throws InterruptedException{
+	public void veorifyFilters() throws InterruptedException{
 		redeSearchPage.searchFor("11013-001");
 		redeSearchPage.expandFiltrosConveniencia();
 
