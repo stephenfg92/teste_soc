@@ -74,47 +74,6 @@ public class BaseWebDriverTest {
 		driver.quit();
 	}
 
-	protected void verifySelectOptions(Select select, String... optionNames){
-		List<WebElement> options = select.getOptions();
-		assertEquals("Opções", optionNames.length, options.size());
-		for (int i = 0; i < optionNames.length; i++) {
-			assertEquals("O nome da opção está errado", optionNames[i], options.get(i).getText().trim());
-		}
-	}
-
-	protected boolean isElementPresent(By by) {
-		try {
-			driver.findElement(by);
-			return true;
-		} catch (NoSuchElementException e){
-			return false;
-		}
-	}
-
-	protected boolean isAlertPresent() {
-		try {
-			driver.switchTo().alert();
-			return true;
-		} catch (NoAlertPresentException e) {
-			return false;
-		}
-	}
-
-	protected String closeAlertAndGetItsText() {
-		try {
-			Alert alert = driver.switchTo().alert();
-			String alertText = alert.getText();
-			if (acceptNextAlert) {
-				alert.accept();
-			} else {
-				alert.dismiss();
-			}
-			return alertText;
-		} finally {
-			acceptNextAlert = true;
-		}
-	}
-
 	public class ScreenshotRule implements MethodRule {
 		public Statement apply(final Statement statement, final FrameworkMethod frameworkMethod, final Object o) {
 			return new Statement() {

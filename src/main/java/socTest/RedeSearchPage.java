@@ -1,14 +1,8 @@
 package socTest;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -23,7 +17,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class RedeSearchPage {
@@ -37,33 +30,52 @@ public class RedeSearchPage {
     @CacheLookup
     WebElement searchBox;
 
-    @FindBys( { @FindBy(className = "pg-busca-socnet"), @FindBy(id = "div-carregando-operacao"), @FindBy(id = "div-infos-carregando-operacao") } )
+    @FindBys( { @FindBy(className = "pg-busca-socnet"),
+    			@FindBy(id = "div-carregando-operacao"),
+    			@FindBy(id = "div-infos-carregando-operacao") } )
     WebElement loadingResults;
 
-    @FindBys( { @FindBy(className = "pg-busca-socnet"), @FindBy(className = "section-content"), @FindBy(id = "conteudo-resultados"), @FindBy(id = "msg-sem-resultados") } )
+    @FindBys( { @FindBy(className = "pg-busca-socnet"),
+    			@FindBy(className = "section-content"),
+    			@FindBy(id = "conteudo-resultados"),
+    			@FindBy(id = "msg-sem-resultados") } )
     WebElement noResultsMessage;
 
     @FindBy(xpath = "//*[@id='conteudo-resultados']/div[1]/div//*")
     //List<WebElement> searchResults;
     WebElement searchResults;
 
-    @FindBys( {@FindBy(className = "section-sidenav"), @FindBy(id = "div-filtro-conveniencias"), @FindBy(className = "expand-filtros")} )
+    @FindBys( {@FindBy(className = "section-sidenav"),
+    		   @FindBy(id = "div-filtro-conveniencias"),
+    		   @FindBy(className = "expand-filtros")} )
     @CacheLookup
     WebElement expandFiltrosConvenienciaBtn;
 
-    @FindBys( {@FindBy(className = "section-sidenav"), @FindBy(id = "div-filtro-servicos"), @FindBy(className = "expand-filtros")} )
+    @FindBys( {@FindBy(className = "section-sidenav"),
+    	       @FindBy(id = "div-filtro-servicos"),
+    	       @FindBy(className = "expand-filtros")} )
     @CacheLookup
     WebElement expandFiltrosServicosBtn;
 
     @FindAll( { @FindBy(className = "elemento-filtro")})
     List<WebElement> filtrosConveniencia;
-    boolean firstIterCall = true;
-    Iterator<WebElement> filtrosIter;
-    WebElement currentIterElement;
+
+    // Controle do iterável
+    boolean m_firstIterCall = true;
+    Iterator<WebElement> m_filtrosIter;
+    WebElement m_currentIterElement;
 
     public RedeSearchPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
+    }
+
+    public WebElement getTitleClass(){
+    	return titleClass;
+    }
+
+    public boolean getNoResultsVisibility(){
+    	return noResultsMessage.isDisplayed();
     }
 
     public void searchFor(String text) throws InterruptedException {
@@ -73,12 +85,15 @@ public class RedeSearchPage {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(3000));
         wait.until(ExpectedConditions.invisibilityOf(loadingResults));
         wait.until(ExpectedConditions.visibilityOf(searchResults));
-        Thread.sleep(5000);
+        Thread.sleep(500);
     }
 
     public void expandFiltrosConveniencia(){
         expandFiltrosConvenienciaBtn.click();
-        //expandFiltrosServicosBtn.click();
+    }
+
+    public void expandFiltrosServicos(){
+    	expandFiltrosServicosBtn.click();
     }
 
 
@@ -87,13 +102,13 @@ public class RedeSearchPage {
     }
 
     public void selectFiltro() throws InterruptedException{
-        if (this.firstIterCall){
-            this.filtrosIter = getFiltrosConveniencia().iterator();
-            this.firstIterCall = false;
+        if (this.m_firstIterCall){
+            this.m_filtrosIter = getFiltrosConveniencia().iterator();
+            this.m_firstIterCall = false;
         }
-        if (this.filtrosIter.hasNext()){
-            WebElement e = filtrosIter.next();
-            this.currentIterElement = e;
+        if (this.m_filtrosIter.hasNext()){
+            WebElement e = m_filtrosIter.next();
+            this.m_currentIterElement = e;
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(500));
             wait.until(ExpectedConditions.elementToBeClickable(e));
@@ -111,11 +126,11 @@ public class RedeSearchPage {
     public void deselectFiltro() throws InterruptedException{
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(500));
-        wait.until(ExpectedConditions.elementToBeClickable(this.currentIterElement));
+        wait.until(ExpectedConditions.elementToBeClickable(this.m_currentIterElement));
 
         Actions actions = new Actions(driver);
-        actions.moveToElement(this.currentIterElement);
-        actions.click(this.currentIterElement);
+        actions.moveToElement(this.m_currentIterElement);
+        actions.click(this.m_currentIterElement);
 
         Action action = actions.build();
         action.perform();
@@ -123,11 +138,11 @@ public class RedeSearchPage {
     }
 
     public void resetFiltroIter(){
-    	this.firstIterCall = true;
+    	this.m_firstIterCall = true;
     }
 
     public boolean isFilterSelected(){
-        WebElement e = this.currentIterElement.findElement(By.tagName("input"));
+        WebElement e = this.m_currentIterElement.findElement(By.tagName("input"));
 
         return e.isSelected();
     }
@@ -136,8 +151,7 @@ public class RedeSearchPage {
     	JavascriptExecutor js = (JavascriptExecutor) driver;
     	js.executeScript("var clickEvent = document.createEvent('MouseEvents');clickEvent.initEvent('mouseover', true, true); arguments[0].dispatchEvent(clickEvent);", searchResults);
 
-    	WebElement btn = searchResults.findElement(By.tagName("a"));//.findElement(By.tagName("button"));
-    	//WebElement btn = searchResults.findElement(By.linkText("Saiba mais"));//.findElement(By.tagName("button"));
+    	WebElement btn = searchResults.findElement(By.tagName("a"));
 
     	WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(1500));
         wait.until(ExpectedConditions.elementToBeClickable(btn));
@@ -146,7 +160,5 @@ public class RedeSearchPage {
 
         WebElement btnt = searchResults.findElement(By.tagName("button"));
     	js.executeScript("arguments[0].click();", btnt);
-
-    	System.out.println("Action performed");
     }
 }

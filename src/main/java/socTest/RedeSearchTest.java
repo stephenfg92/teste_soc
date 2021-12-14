@@ -1,16 +1,14 @@
 package socTest;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
-import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 public class RedeSearchTest extends BaseWebDriverTest {
 	private RedeSearchPage redeSearchPage;
@@ -24,8 +22,21 @@ public class RedeSearchTest extends BaseWebDriverTest {
 		redeSearchPage = new RedeSearchPage(driver);
 	}
 
+	@Test public void verificarPagina(){
+		// Verifica se o título da página é o esperado.
+		assertThat(driver.getTitle(), containsString("Rede Credenciada SOC"));
+
+		// Verifica se o título visualizado no topo da página é o correto
+		assertThat(redeSearchPage.getTitleClass().getText(), containsString("Rede Credenciada SOCNET"));
+
+		// Verifica se a pagina é inicializada sem resultados visíveis
+		assertTrue(redeSearchPage.getNoResultsVisibility());
+
+		takeScreenshot("Rede Inicio");
+	}
+
 	@Test
-	public void veorifyFilters() throws InterruptedException{
+	public void verificarFiltrosConveniencia() throws InterruptedException{
 		redeSearchPage.searchFor("11013-001");
 		redeSearchPage.expandFiltrosConveniencia();
 
